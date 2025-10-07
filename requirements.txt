@@ -1,0 +1,6 @@
+# cspell:ignore kagglehub numpy scikit statsmodels
+kagglehub[pandas-datasets]
+pandas
+numpy
+scikit-learn
+statsmodels

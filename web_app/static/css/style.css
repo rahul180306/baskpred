@@ -1,0 +1,301 @@
+/* Custom styles for NBA Synergy Predictor */
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f4a261; /* Basketball court-inspired color */
+    color: #333;
+    position: relative;
+    overflow-x: hidden;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: radial-gradient(circle at 20% 80%, rgba(255, 69, 0, 0.1) 0%, transparent 50%),
+                      radial-gradient(circle at 80% 20%, rgba(255, 69, 0, 0.1) 0%, transparent 50%),
+                      radial-gradient(circle at 40% 40%, rgba(0, 123, 255, 0.05) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: -1;
+}
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 250px;
+    height: 100vh;
+    z-index: 1000;
+    box-shadow: 2px 0 10px rgba(255, 69, 0, 0.3);
+    transition: transform 0.3s ease;
+    background: linear-gradient(180deg, #000000 0%, #2a2a2a 100%);
+}
+
+.sidebar-hidden {
+    transform: translateX(-100%);
+}
+
+.sidebar-sticky {
+    position: relative;
+    top: 0;
+    height: calc(100vh - 48px);
+    padding-top: .5rem;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.sidebar .nav-link {
+    font-weight: 500;
+    color: #fff;
+    transition: all 0.3s ease;
+    border-radius: 5px;
+    margin: 5px 10px;
+    padding: 10px 15px;
+    position: relative;
+    overflow: hidden;
+}
+
+.sidebar .nav-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 69, 0, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.sidebar .nav-link:hover::before {
+    left: 100%;
+}
+
+.sidebar .nav-link:hover {
+    background-color: #495057;
+    color: #fff;
+    transform: translateX(5px);
+    box-shadow: 0 0 15px rgba(255, 69, 0, 0.5);
+}
+
+.sidebar .nav-link.active {
+    background: linear-gradient(45deg, #FF4500, #FF6347);
+    color: #fff;
+    box-shadow: 0 0 20px rgba(255, 69, 0, 0.6);
+}
+
+.sidebar .nav-link i {
+    margin-right: 10px;
+}
+
+main {
+    padding-top: 48px;
+    margin-left: 250px;
+    transition: margin-left 0.3s ease;
+}
+
+main.sidebar-hidden {
+    margin-left: 0;
+}
+
+.jumbotron {
+    background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+    color: white;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(255, 69, 0, 0.2);
+    animation: fadeInUp 1s ease-out;
+    border: 1px solid rgba(255, 69, 0, 0.3);
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.alert {
+    border-radius: 10px;
+    animation: slideIn 0.5s ease-out;
+    color: #ffffff;
+    background: linear-gradient(45deg, #FF4500, #FF6347);
+    border: none;
+    box-shadow: 0 4px 15px rgba(255, 69, 0, 0.3);
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.btn-primary {
+    background: linear-gradient(45deg, #007bff, #0056b3);
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+}
+
+.table {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    color: #ffffff;
+}
+
+.h2 {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+/* Basketball-themed styles */
+.team-btn {
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.team-btn::before {
+    content: '🏀';
+    position: absolute;
+    top: 50%;
+    left: -30px;
+    transform: translateY(-50%);
+    font-size: 1.2em;
+    transition: left 0.3s ease;
+}
+
+.team-btn:hover::before {
+    left: 10px;
+}
+
+.team-btn:hover {
+    transform: scale(1.05) translateY(-5px);
+    box-shadow: 0 8px 25px rgba(255, 69, 0, 0.6);
+    filter: brightness(1.1);
+}
+
+.team-btn:active {
+    transform: scale(0.98) translateY(-2px);
+}
+
+.card {
+    background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
+    border: none;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+    animation: cardFadeIn 0.6s ease-out;
+    animation-fill-mode: both;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+.card-title {
+    color: #FF4500;
+    font-weight: bold;
+}
+
+.card-text {
+    color: #cccccc;
+}
+
+@keyframes cardFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Basketball court pattern */
+.court-pattern {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(5px);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -2;
+}
+
+/* Advanced animations */
+@keyframes bounceIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.3);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.05);
+    }
+    70% {
+        transform: scale(0.9);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.team-section {
+    animation: bounceIn 1s ease-out;
+}
+
+.players-section {
+    animation: fadeInUp 0.8s ease-out 0.3s;
+    animation-fill-mode: both;
+    margin-top: 2rem;
+}
+
+/* Glow effect for active elements */
+.glow {
+    box-shadow: 0 0 20px rgba(255, 69, 0, 0.8);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .sidebar {
+        position: static;
+        height: auto;
+        padding: 0;
+    }
+    .sidebar-sticky {
+        height: auto;
+    }
+    main {
+        padding-top: 0;
+    }
+    .team-btn {
+        font-size: 0.9em;
+    }
+}

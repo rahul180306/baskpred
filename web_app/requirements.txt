@@ -1,0 +1,8 @@
+pandas
+numpy
+scikit-learn
+statsmodels
+kagglehub
+flask
+plotly>=5.15.0
+joblib>=1.3.0

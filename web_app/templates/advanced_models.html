@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced ML Models - NBA Synergy</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('home') }}">NBA Synergy Prediction</a>
+            <div class="navbar-nav">
+                <a class="nav-link" href="{{ url_for('home') }}">Home</a>
+                <a class="nav-link" href="{{ url_for('data_loading') }}">Data Loading</a>
+                <a class="nav-link" href="{{ url_for('data_processing') }}">Data Processing</a>
+                <a class="nav-link" href="{{ url_for('regression') }}">Regression</a>
+                <a class="nav-link" href="{{ url_for('classification') }}">Classification</a>
+                <a class="nav-link" href="{{ url_for('comparison') }}">Comparison</a>
+                <a class="nav-link active" href="{{ url_for('advanced_models') }}">Advanced Models</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">🧠 Advanced Machine Learning Models</h1>
+        
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <h5>🚀 Neural Networks vs Traditional Models</h5>
+                    <p>Neural networks can learn complex, non-linear patterns that traditional models miss. 
+                    They're especially good at finding hidden relationships between player statistics and synergy.</p>
+                </div>
+            </div>
+        </div>
+
+        {% if message %}
+        <div class="alert alert-primary">{{ message }}</div>
+        {% endif %}
+
+        {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+        {% endif %}
+
+        {% if nn_results %}
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card shadow">
+                    <div class="card-header bg-success text-white">
+                        <h5><i class="fas fa-brain"></i> Neural Network Results (Regression)</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>MSE:</strong> <span class="badge bg-info">{{ "%.6f"|format(nn_results.mse) }}</span></p>
+                        <p><strong>R²:</strong> <span class="badge bg-success">{{ "%.6f"|format(nn_results.r2) }}</span></p>
+                        <p><strong>MAE:</strong> <span class="badge bg-warning">{{ "%.6f"|format(nn_results.mae) }}</span></p>
+                        <p><small class="text-muted">Training completed in {{ nn_results.epochs_trained }} epochs</small></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card shadow">
+                    <div class="card-header bg-info text-white">
+                        <h5><i class="fas fa-chart-bar"></i> Model Comparison</h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Model</th>
+                                    <th>MSE</th>
+                                    <th>R²</th>
+                                    <th>Improvement</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Linear Regression</td>
+                                    <td>{{ "%.4f"|format(linear_results.mse) }}</td>
+                                    <td>{{ "%.4f"|format(linear_results.r2) }}</td>
+                                    <td>-</td>
+                                </tr>
+                                <tr class="table-success">
+                                    <td><strong>Neural Network</strong></td>
+                                    <td>{{ "%.4f"|format(nn_results.mse) }}</td>
+                                    <td>{{ "%.4f"|format(nn_results.r2) }}</td>
+                                    <td>
+                                        {% set improvement = ((linear_results.r2 - nn_results.r2) / linear_results.r2 * 100) if linear_results.r2 != 0 else 0 %}
+                                        <span class="badge bg-success">{{ "%.1f"|format(improvement) }}% better</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if nn_classifier_results %}
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card shadow">
+                    <div class="card-header bg-warning text-dark">
+                        <h5><i class="fas fa-tags"></i> Neural Network Classification</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Accuracy:</strong> <span class="badge bg-success">{{ "%.2f"|format(nn_classifier_results.accuracy * 100) }}%</span></p>
+                        <p><strong>Precision:</strong> <span class="badge bg-info">{{ "%.4f"|format(nn_classifier_results.precision) }}</span></p>
+                        <p><strong>Recall:</strong> <span class="badge bg-warning">{{ "%.4f"|format(nn_classifier_results.recall) }}</span></p>
+                        <p><strong>F1-Score:</strong> <span class="badge bg-primary">{{ "%.4f"|format(nn_classifier_results.f1) }}</span></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card shadow">
+                    <div class="card-header bg-secondary text-white">
+                        <h5><i class="fas fa-balance-scale"></i> Classification Comparison</h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Model</th>
+                                    <th>Accuracy</th>
+                                    <th>Improvement</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Logistic Regression</td>
+                                    <td>{{ "%.2f"|format(classification_results.log_acc * 100) }}%</td>
+                                    <td>-</td>
+                                </tr>
+                                <tr>
+                                    <td>Decision Tree</td>
+                                    <td>{{ "%.2f"|format(classification_results.dt_acc * 100) }}%</td>
+                                    <td>-</td>
+                                </tr>
+                                <tr class="table-success">
+                                    <td><strong>Neural Network</strong></td>
+                                    <td>{{ "%.2f"|format(nn_classifier_results.accuracy * 100) }}%</td>
+                                    <td>
+                                        {% set best_traditional = [classification_results.log_acc, classification_results.dt_acc] | max %}
+                                        {% set improvement = ((nn_classifier_results.accuracy - best_traditional) / best_traditional * 100) if best_traditional > 0 else 0 %}
+                                        <span class="badge bg-success">{{ "%.1f"|format(improvement) }}% better</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Training History Charts -->
+        {% if training_history %}
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white">
+                        <h5><i class="fas fa-chart-line"></i> Training History</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="training-history-chart"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% endif %}
+
+        <!-- Real-time Prediction Section -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card shadow">
+                    <div class="card-header bg-dark text-white">
+                        <h5><i class="fas fa-magic"></i> Real-time Synergy Prediction</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted">Enter player statistics to get predictions from all trained models:</p>
+                        
+                        <form id="prediction-form" class="mb-4">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group mb-3">
+                                        <label for="combined_pts" class="form-label">Combined Points (Total Season):</label>
+                                        <input type="number" class="form-control" id="combined_pts" 
+                                               placeholder="e.g., 4500" step="0.1" required>
+                                        <small class="form-text text-muted">Sum of both players' season points</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group mb-3">
+                                        <label for="combined_reb" class="form-label">Combined Rebounds:</label>
+                                        <input type="number" class="form-control" id="combined_reb" 
+                                               placeholder="e.g., 1200" step="0.1" required>
+                                        <small class="form-text text-muted">Sum of both players' season rebounds</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group mb-3">
+                                        <label for="combined_ast" class="form-label">Combined Assists:</label>
+                                        <input type="number" class="form-control" id="combined_ast" 
+                                               placeholder="e.g., 800" step="0.1" required>
+                                        <small class="form-text text-muted">Sum of both players' season assists</small>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-calculator"></i> Predict Synergy
+                                </button>
+                            </div>
+                        </form>
+                        
+                        <div id="prediction-results" class="mt-4"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Examples -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-lightbulb"></i> Quick Examples to Try</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <button class="btn btn-outline-primary btn-sm w-100 example-btn" 
+                                        data-pts="4500" data-reb="1200" data-ast="800">
+                                    <strong>High Synergy Duo</strong><br>
+                                    <small>Points: 4500, Rebounds: 1200, Assists: 800</small>
+                                </button>
+                            </div>
+                            <div class="col-md-4">
+                                <button class="btn btn-outline-warning btn-sm w-100 example-btn" 
+                                        data-pts="3000" data-reb="800" data-ast="500">
+                                    <strong>Medium Synergy Duo</strong><br>
+                                    <small>Points: 3000, Rebounds: 800, Assists: 500</small>
+                                </button>
+                            </div>
+                            <div class="col-md-4">
+                                <button class="btn btn-outline-danger btn-sm w-100 example-btn" 
+                                        data-pts="2000" data-reb="600" data-ast="300">
+                                    <strong>Low Synergy Duo</strong><br>
+                                    <small>Points: 2000, Rebounds: 600, Assists: 300</small>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Fill form with example data
+        document.querySelectorAll('.example-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.getElementById('combined_pts').value = this.dataset.pts;
+                document.getElementById('combined_reb').value = this.dataset.reb;
+                document.getElementById('combined_ast').value = this.dataset.ast;
+            });
+        });
+
+        // Real-time prediction
+        document.getElementById('prediction-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Predicting...';
+            submitBtn.disabled = true;
+            
+            const data = {
+                combined_pts: parseFloat(document.getElementById('combined_pts').value),
+                combined_reb: parseFloat(document.getElementById('combined_reb').value),
+                combined_ast: parseFloat(document.getElementById('combined_ast').value)
+            };
+            
+            fetch('/predict_synergy', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.error) {
+                    document.getElementById('prediction-results').innerHTML = 
+                        `<div class="alert alert-danger">Error: ${result.error}</div>`;
+                } else {
+                    let html = '<div class="card"><div class="card-header"><h5>🎯 Prediction Results</h5></div><div class="card-body"><div class="row">';
+                    
+                    const models = result.predictions || result;
+                    for (let model in models) {
+                        const prediction = models[model];
+                        let badgeClass = 'bg-secondary';
+                        let interpretation = '';
+                        
+                        if (prediction > 0) {
+                            badgeClass = 'bg-success';
+                            interpretation = 'Positive Synergy';
+                        } else if (prediction < -2) {
+                            badgeClass = 'bg-danger';
+                            interpretation = 'Poor Synergy';
+                        } else {
+                            badgeClass = 'bg-warning';
+                            interpretation = 'Neutral Synergy';
+                        }
+                        
+                        html += `
+                            <div class="col-md-4 mb-3">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h6>${model.replace('_', ' ').toUpperCase()}</h6>
+                                        <span class="badge ${badgeClass} fs-6">${prediction.toFixed(4)}</span>
+                                        <br><small class="text-muted">${interpretation}</small>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                    
+                    html += '</div></div></div>';
+                    document.getElementById('prediction-results').innerHTML = html;
+                }
+                
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            })
+            .catch(error => {
+                document.getElementById('prediction-results').innerHTML = 
+                    `<div class="alert alert-danger">Error: ${error.message}</div>`;
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            });
+        });
+
+        // Render training history chart if available
+        {% if training_history %}
+        const historyData = {{ training_history | safe }};
+        
+        const traces = [
+            {
+                x: Array.from({length: historyData.loss.length}, (_, i) => i + 1),
+                y: historyData.loss,
+                type: 'scatter',
+                mode: 'lines',
+                name: 'Training Loss',
+                line: {color: '#dc3545'}
+            }
+        ];
+        
+        if (historyData.val_loss && historyData.val_loss.length > 0) {
+            traces.push({
+                x: Array.from({length: historyData.val_loss.length}, (_, i) => i + 1),
+                y: historyData.val_loss,
+                type: 'scatter',
+                mode: 'lines',
+                name: 'Validation Loss',
+                line: {color: '#fd7e14'}
+            });
+        }
+        
+        const layout = {
+            title: 'Model Training Progress',
+            xaxis: {title: 'Epoch'},
+            yaxis: {title: 'Loss'},
+            hovermode: 'x unified'
+        };
+        
+        Plotly.newPlot('training-history-chart', traces, layout);
+        {% endif %}
+    </script>
+</body>
+</html>
